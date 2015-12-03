@@ -47,7 +47,8 @@ ARCH := $(shell uname -m)
 # endif
 
 ifeq ($(UNAME),Linux)
-LDFLAGS += -Wl,-rpath,. -lpthread # add the local path to the program's search path
+CFLAGS += -pthread
+LDFLAGS += -Wl,-rpath,. -pthread # add the local path to the program's search path
 endif
 
 
@@ -63,7 +64,7 @@ OBJS := $(addprefix $(BUILDDIR)/,$(OBJS))
 
 DEPS := $(OBJS:.o=.d)
 
-$(BUILDDIR)/$(TARGET):  $(OBJS)
+$(BUILDDIR)/$(TARGET): $(OBJS)
 	@echo linking $@
 	@$(CC) $(LDFLAGS) $(OBJS) -o $@ $(LDLIBS)
 
@@ -80,7 +81,7 @@ MKDIR = if [ ! -d $(dir $@) ]; then mkdir -p $(dir $@); fi
 
 $(BUILDDIR)/%.o: %.c
 	@$(MKDIR)
-	@echo compiling $(CFLAGS) $<
+	@echo compiling $<
 	@$(CC) $(CFLAGS) -c $< -MD -MT $@ -MF $(@:%o=%d) -o $@
 
 $(BUILDDIR)/%.o: %.cpp
